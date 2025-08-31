@@ -204,9 +204,14 @@
 			{#if wordDefinition}
 				<div class="mt-4 w-full bg-base-200 px-section py-5">
 					<div class="">
-						<h4 class="mb-5">
-							<span class="font-semibold text-primary uppercase">{wordDefinition?.data.word}</span>
-						</h4>
+						<div class="flex items-center justify-between gap-2">
+							<h4 class="mb-5 font-semibold text-primary uppercase">
+								{wordDefinition?.data.word}
+							</h4>
+							{#if isLoadingDefinition}
+								<div class="loading loading-bars"></div>
+							{/if}
+						</div>
 
 						{#if wordDefinition?.data?.meanings}
 							<div class="space-y-2">

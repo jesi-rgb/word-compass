@@ -5,8 +5,20 @@ import { eq } from 'drizzle-orm';
 import type { RaeApiResponse } from '$lib/types';
 
 const RAE_API_BASE_URL = 'https://rae-api.com/api/words';
+const RAE_API_SEARCH_URL = 'https://rae-api.com/api/search';
 
-export const GET: RequestHandler = async ({ params }) => {
+function parseDescription(description: string): string {
+	if (!description) return description;
+
+	// Split on 'Sin.:' and take everything before it, remove numbers and periods
+	const beforeSynonyms = description.split(/Sin\.\:/i)[0];
+	const removeNumber = beforeSynonyms.replace(/\d+\.\s*/, '');
+
+	// Remove trailing period and trim
+	return removeNumber.trim().replace(/\.\s*$/, '');
+}
+
+export const GET: RequestHandler = async ({ params, fetch }) => {
 	try {
 		const word = params.word!.toLowerCase().trim();
 
@@ -26,20 +38,44 @@ export const GET: RequestHandler = async ({ params }) => {
 		}
 
 		// Fetch from RAE API if not in cache
-		const response = await fetch(`${RAE_API_BASE_URL}/${encodeURIComponent(word)}`);
+		let response = await fetch(`${RAE_API_BASE_URL}/${encodeURIComponent(word)}`);
+		let wordData: RaeApiResponse;
 
 		if (!response.ok) {
 			if (response.status === 404) {
-				return json({ error: 'Word not found in dictionary', ok: false }, { status: 404 });
+				// Try search API with exact match
+				const searchResponse = await fetch(
+					`${RAE_API_SEARCH_URL}?q=${encodeURIComponent(word)}&eng=exact`
+				);
+
+				if (!searchResponse.ok) {
+					return json({ error: 'Word not found in dictionary', ok: false }, { status: 404 });
+				}
+
+				wordData = await searchResponse.json();
+			} else {
+				throw new Error(`RAE API responded with status: ${response.status}`);
 			}
-			throw new Error(`RAE API responded with status: ${response.status}`);
+		} else {
+			wordData = await response.json();
 		}
 
-		const wordData: RaeApiResponse = await response.json();
-
 		// Validate the response structure
-		if (!wordData.ok || !wordData.data || !wordData.data.word) {
+		if (!wordData.ok || !wordData.data) {
 			return json({ error: 'Invalid response from RAE API', ok: false }, { status: 502 });
+		}
+
+		// Process descriptions to remove synonyms and antonyms
+		if (wordData.data.meanings) {
+			wordData.data.meanings.forEach((meaning) => {
+				if (meaning.senses) {
+					meaning.senses.forEach((sense) => {
+						if (sense.description) {
+							sense.description = parseDescription(sense.raw);
+						}
+					});
+				}
+			});
 		}
 
 		// Cache the result

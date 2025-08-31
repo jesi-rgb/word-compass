@@ -89,5 +89,3 @@
 	--color-subtle: color-mix(in oklch, var(--color-base-content), transparent 50%);
 	--color-muted: color-mix(in oklch, var(--color-base-content), transparent 80%);
 }
-
-@custom-variant dark (&:where([data-theme=barelycookie], [data-theme=barelycookie] *));
