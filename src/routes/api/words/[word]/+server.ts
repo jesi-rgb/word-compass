@@ -11,8 +11,9 @@ function parseDescription(description: string): string {
 	if (!description) return description;
 
 	// Split on 'Sin.:' and take everything before it, remove numbers and periods
-	const beforeSynonyms = description.split(/Sin\.\:/i)[0];
-	const removeNumber = beforeSynonyms.replace(/\d+\.\s*/, '');
+	const beforeSynonyms = description.split(/Sin\.\:/g)[0];
+	const beforeAntonyms = beforeSynonyms.split(/Ant\.\:/g)[0];
+	const removeNumber = beforeAntonyms.replace(/\d+\.\s*/, '');
 
 	// Remove trailing period and trim
 	return removeNumber.trim().replace(/\.\s*$/, '');

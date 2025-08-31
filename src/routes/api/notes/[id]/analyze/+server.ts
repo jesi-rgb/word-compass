@@ -173,36 +173,36 @@ export const POST: RequestHandler = async ({ params, request }) => {
 		const analyzedWords: any[] = [];
 		const batchSize = 5; // Process words in batches to avoid overwhelming the API
 
-		// for (let i = 0; i < wordsToAnalyze.length; i += batchSize) {
-		// 	const batch = wordsToAnalyze.slice(i, i + batchSize);
-		// 	const batchPromises = batch.map((word) => fetchWordDefinition(word));
-		// 	const batchResults = await Promise.all(batchPromises);
-		//
-		// 	batch.forEach((word, index) => {
-		// 		const definition = batchResults[index];
-		// 		if (definition && definition.ok) {
-		// 			analyzedWords.push({
-		// 				word,
-		// 				definition
-		// 			});
-		// 		}
-		// 	});
-		//
-		// 	// Small delay between batches to be respectful to the API
-		// 	if (i + batchSize < wordsToAnalyze.length) {
-		// 		await new Promise((resolve) => setTimeout(resolve, 100));
-		// 	}
-		// }
-		//
-		// // Update the note with analyzed words
-		// const [updatedNote] = await db
-		// 	.update(notes)
-		// 	.set({
-		// 		analyzed_words: analyzedWords,
-		// 		updated_at: new Date()
-		// 	})
-		// 	.where(eq(notes.id, noteId))
-		// 	.returning();
+		for (let i = 0; i < wordsToAnalyze.length; i += batchSize) {
+			const batch = wordsToAnalyze.slice(i, i + batchSize);
+			const batchPromises = batch.map((word) => fetchWordDefinition(word));
+			const batchResults = await Promise.all(batchPromises);
+
+			batch.forEach((word, index) => {
+				const definition = batchResults[index];
+				if (definition && definition.ok) {
+					analyzedWords.push({
+						word,
+						definition
+					});
+				}
+			});
+
+			// Small delay between batches to be respectful to the API
+			if (i + batchSize < wordsToAnalyze.length) {
+				await new Promise((resolve) => setTimeout(resolve, 100));
+			}
+		}
+
+		// Update the note with analyzed words
+		const [updatedNote] = await db
+			.update(notes)
+			.set({
+				analyzed_words: analyzedWords,
+				updated_at: new Date()
+			})
+			.where(eq(notes.id, noteId))
+			.returning();
 
 		return json({
 			data: {
