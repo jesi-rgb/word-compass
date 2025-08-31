@@ -8,10 +8,10 @@
 	let note = $state<Note | null>(null);
 	let isLoading = $state(true);
 	let error = $state<string | null>(null);
-	let hoveredWord = $state<string | null>(null);
 	let wordDefinition = $state<RaeApiResponse | null>(null);
 	let wordDefinitionTooltip = $state<RaeApiResponse | null>(null);
 	let isLoadingDefinition = $state(false);
+	let wordError = $state<string | null>(null);
 	$inspect(wordDefinition);
 
 	onMount(async () => {
@@ -44,8 +44,8 @@
 	}
 
 	async function handleWordClick(word: string) {
-		hoveredWord = word;
 		isLoadingDefinition = true;
+		wordError = null;
 
 		try {
 			const response = await fetch(`/api/words/${encodeURIComponent(word)}`);
@@ -55,47 +55,34 @@
 					// Validate that the response has the expected structure
 					if (result.data.data && result.data.data.word && result.data.data.meanings) {
 						wordDefinition = result.data;
+						wordError = null;
 					} else {
 						console.warn('Invalid word definition structure:', result.data);
 						wordDefinition = null;
+						wordError = 'Estructura de definición inválida';
 					}
 				} else {
 					console.warn('Word definition not found or API error:', result.error);
 					wordDefinition = null;
+					wordError = result.error || 'Palabra no encontrada en el diccionario';
 				}
 			} else {
+				const result = await response.json().catch(() => ({}));
 				console.warn('Failed to fetch word definition:', response.status);
 				wordDefinition = null;
+				if (response.status === 404) {
+					wordError = result.error || 'Palabra no encontrada en el diccionario';
+				} else {
+					wordError = 'Error al buscar la palabra';
+				}
 			}
 		} catch (error) {
 			console.error('Error fetching word definition:', error);
 			wordDefinition = null;
+			wordError = 'Error al conectar con el diccionario';
 		} finally {
 			isLoadingDefinition = false;
 		}
-	}
-
-	async function handleWordHover(word: string) {
-		if (hoveredWord === word) return;
-
-		hoveredWord = word;
-
-		try {
-			const response = await fetch(`/api/words/${encodeURIComponent(word)}`);
-			if (response.ok) {
-				const result = await response.json();
-				console.log('Word data:', result);
-				wordDefinitionTooltip = result.data;
-			} else {
-				console.warn('Failed to fetch word data:', response.status);
-			}
-		} catch (error) {
-			console.error('Error fetching word data:', error);
-		}
-	}
-
-	function handleWordLeave() {
-		isLoadingDefinition = false;
 	}
 
 	function renderTextWithHoverableWords(text: string) {
@@ -178,8 +165,6 @@
 						{#if segment.type === 'word'}
 							<button
 								class="cursor-pointer transition-colors duration-200 hover:bg-primary hover:text-primary-content"
-								onmouseenter={() => handleWordHover(segment.cleanWord)}
-								onmouseleave={handleWordLeave}
 								onclick={() => handleWordClick(segment.cleanWord)}
 								tabindex="0"
 							>
@@ -194,7 +179,7 @@
 		</div>
 	{/if}
 
-	{#if wordDefinition}
+	{#if wordDefinition || wordError || isLoadingDefinition}
 		<div class="mt-4 w-full bg-base-200 px-section py-5">
 			<div class="">
 				<div class="flex items-center justify-between gap-2">
@@ -206,7 +191,21 @@
 					{/if}
 				</div>
 
-				{#if wordDefinition?.data?.meanings}
+				{#if wordError}
+					<div class="rounded-md border border-error/20 bg-error/10 p-4">
+						<div class="flex items-center gap-2">
+							<svg class="h-5 w-5 text-error" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									stroke-width="2"
+									d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.268 16.5c-.77.833.192 2.5 1.732 2.5z"
+								/>
+							</svg>
+							<span class="text-sm font-medium text-error">{wordError}</span>
+						</div>
+					</div>
+				{:else if wordDefinition?.data?.meanings}
 					<div class="space-y-2">
 						{#each wordDefinition.data.meanings as meaning, i}
 							<div class="mb-7 border-l-4 border-primary pl-3">
@@ -254,7 +253,7 @@
 							</div>
 						{/each}
 					</div>
-				{:else}
+				{:else if !isLoadingDefinition}
 					<div class="text-sm text-error">Definition not found or error occurred</div>
 				{/if}
 			</div>
