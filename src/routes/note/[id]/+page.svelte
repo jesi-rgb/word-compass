@@ -4,9 +4,6 @@
 	import { goto } from '$app/navigation';
 	import type { Note, RaeApiResponse } from '$lib/types';
 	import { getWordCategoryLabel } from '$lib/categories';
-	import WordTooltip from '$lib/components/tooltip/WordTooltip.svelte';
-	import { Tooltip } from 'bits-ui';
-	import TooltipContent from '$lib/components/tooltip/TooltipContent.svelte';
 
 	let note = $state<Note | null>(null);
 	let isLoading = $state(true);
@@ -143,132 +140,124 @@
 	<title>{note?.title || 'Note'} - Word Compass</title>
 </svelte:head>
 
-<Tooltip.Provider>
-	<Tooltip.Root delayDuration={0}>
-		<div class="">
-			{#if error}
-				<div class="mx-auto max-w-4xl">
-					<div class="alert alert-error">
-						<svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-							<path
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								stroke-width="2"
-								d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.268 16.5c-.77.833.192 2.5 1.732 2.5z"
-							/>
-						</svg>
-						<span>{error}</span>
-						<button class="btn btn-sm" onclick={goBack}>Go Back</button>
-					</div>
-				</div>
-			{:else if note}
-				<div class="mx-section">
-					<div class="mb-6 flex items-center justify-between">
-						<div class="flex flex-col gap-4">
-							<button class="btn w-fit btn-sm" onclick={goBack}> Back to Notes </button>
-							<div>
-								{#if note.title}
-									<h1 class="text-2xl font-bold">{note.title}</h1>
-								{:else}
-									<h1 class="font-display text-2xl font-bold">Nota #{note.id}</h1>
-								{/if}
-								<p class="text-sm text-subtle">Creada el {formatDate(note.created_at)}</p>
-							</div>
-						</div>
-					</div>
-
-					<div class="prose max-w-none">
-						<div class="font-serif text-base leading-relaxed">
-							{#each renderedWords as segment}
-								{#if segment.type === 'word'}
-									<Tooltip.Trigger>
-										<button
-											class="cursor-pointer transition-colors duration-200 hover:bg-primary hover:text-primary-content"
-											onmouseenter={() => handleWordHover(segment.cleanWord)}
-											onmouseleave={handleWordLeave}
-											onclick={() => handleWordClick(segment.cleanWord)}
-											tabindex="0"
-										>
-											{segment.text}
-										</button>
-									</Tooltip.Trigger>
-								{:else}
-									<span>{segment.text}</span>
-								{/if}
-							{/each}
-						</div>
-					</div>
-				</div>
-			{/if}
-
-			{#if wordDefinition}
-				<div class="mt-4 w-full bg-base-200 px-section py-5">
-					<div class="">
-						<div class="flex items-center justify-between gap-2">
-							<h4 class="mb-5 font-semibold text-primary uppercase">
-								{wordDefinition?.data.word}
-							</h4>
-							{#if isLoadingDefinition}
-								<div class="loading loading-bars"></div>
-							{/if}
-						</div>
-
-						{#if wordDefinition?.data?.meanings}
-							<div class="space-y-2">
-								{#each wordDefinition.data.meanings as meaning, i}
-									<div class="border-l-4 border-primary pl-3">
-										{#if meaning.origin}
-											<div
-												class="mb-5 font-noto text-sm
-										font-medium text-subtle italic"
-											>
-												{meaning.origin.raw}
-											</div>
-										{/if}
-										<div class="space-y-5">
-											{#each meaning.senses || [] as sense, j}
-												<div class="">
-													<span class="text-sm text-subtle">{j + 1}.</span>
-													<span
-														class="text-sm
-												font-semibold text-primary">{getWordCategoryLabel(sense.category) || 'Desconocido'}</span
-													>
-													<p class="mt-1 text-sm">
-														{sense.description || 'No description available'}
-													</p>
-													{#if sense.synonyms?.length > 0}
-														<div
-															class="mt-1 pl-2 text-xs
-													text-subtle"
-														>
-															<strong>Sinónimos:</strong>
-															{sense.synonyms.join(', ')}
-														</div>
-													{/if}
-
-													{#if sense.antonyms?.length > 0}
-														<div
-															class="mt-1 pl-2 text-xs
-													text-subtle"
-														>
-															<strong>Antónimos:</strong>
-															{sense.antonyms.join(', ')}
-														</div>
-													{/if}
-												</div>
-											{/each}
-										</div>
-									</div>
-								{/each}
-							</div>
-						{:else}
-							<div class="text-sm text-error">Definition not found or error occurred</div>
-						{/if}
-					</div>
-				</div>
-			{/if}
+<div class="">
+	{#if error}
+		<div class="mx-auto max-w-4xl">
+			<div class="alert alert-error">
+				<svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<path
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						stroke-width="2"
+						d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.268 16.5c-.77.833.192 2.5 1.732 2.5z"
+					/>
+				</svg>
+				<span>{error}</span>
+				<button class="btn btn-sm" onclick={goBack}>Go Back</button>
+			</div>
 		</div>
+	{:else if note}
+		<div class="mx-section">
+			<div class="mb-6 flex items-center justify-between">
+				<div class="flex flex-col gap-4">
+					<button class="btn w-fit btn-sm" onclick={goBack}> Back to Notes </button>
+					<div>
+						{#if note.title}
+							<h1 class="text-2xl font-bold">{note.title}</h1>
+						{:else}
+							<h1 class="font-display text-2xl font-bold">Nota #{note.id}</h1>
+						{/if}
+						<p class="text-sm text-subtle">Creada el {formatDate(note.created_at)}</p>
+					</div>
+				</div>
+			</div>
 
-		<Tooltip.Content>asfd</Tooltip.Content>
-	</Tooltip.Root>
-</Tooltip.Provider>
+			<div class="prose max-w-none">
+				<div class="font-serif text-base leading-relaxed">
+					{#each renderedWords as segment}
+						{#if segment.type === 'word'}
+							<button
+								class="cursor-pointer transition-colors duration-200 hover:bg-primary hover:text-primary-content"
+								onmouseenter={() => handleWordHover(segment.cleanWord)}
+								onmouseleave={handleWordLeave}
+								onclick={() => handleWordClick(segment.cleanWord)}
+								tabindex="0"
+							>
+								{segment.text}
+							</button>
+						{:else}
+							<span>{segment.text}</span>
+						{/if}
+					{/each}
+				</div>
+			</div>
+		</div>
+	{/if}
+
+	{#if wordDefinition}
+		<div class="mt-4 w-full bg-base-200 px-section py-5">
+			<div class="">
+				<div class="flex items-center justify-between gap-2">
+					<h4 class="mb-5 font-semibold text-primary uppercase">
+						{wordDefinition?.data.word}
+					</h4>
+					{#if isLoadingDefinition}
+						<div class="loading loading-bars"></div>
+					{/if}
+				</div>
+
+				{#if wordDefinition?.data?.meanings}
+					<div class="space-y-2">
+						{#each wordDefinition.data.meanings as meaning, i}
+							<div class="mb-7 border-l-4 border-primary pl-3">
+								{#if meaning.origin}
+									<div
+										class="mb-5 font-noto text-sm
+										font-medium text-subtle italic"
+									>
+										{meaning.origin.raw}
+									</div>
+								{/if}
+								<div class="space-y-5">
+									{#each meaning.senses || [] as sense, j}
+										<div class="">
+											<span class="text-sm text-subtle">{j + 1}.</span>
+											<span
+												class="text-sm
+												font-semibold text-primary">{getWordCategoryLabel(sense.category) || 'Desconocido'}</span
+											>
+											<p class="mt-1 text-sm">
+												{sense.description || 'No description available'}
+											</p>
+											{#if sense.synonyms?.length > 0}
+												<div
+													class="mt-1 pl-2 text-xs
+													text-subtle"
+												>
+													<strong>Sinónimos:</strong>
+													{sense.synonyms.join(', ')}
+												</div>
+											{/if}
+
+											{#if sense.antonyms?.length > 0}
+												<div
+													class="mt-1 pl-2 text-xs
+													text-subtle"
+												>
+													<strong>Antónimos:</strong>
+													{sense.antonyms.join(', ')}
+												</div>
+											{/if}
+										</div>
+									{/each}
+								</div>
+							</div>
+						{/each}
+					</div>
+				{:else}
+					<div class="text-sm text-error">Definition not found or error occurred</div>
+				{/if}
+			</div>
+		</div>
+	{/if}
+</div>
