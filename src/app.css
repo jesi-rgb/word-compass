@@ -1,4 +1,24 @@
 @import url("https://fonts.bunny.net/css?family=noto-sans:300,300i,400,400i");
+
+@font-face {
+	font-family: 'AT Name Sans Variable';
+	src: url("https://jesi-rgb-fonts.s3.eu-west-3.amazonaws.com/AT-NameSansVariable.ttf");
+	weight: 1 1000;
+}
+
+@font-face {
+	font-family: 'Roslindale Text Regular';
+	src: url("https://jesi-rgb-fonts.s3.eu-west-3.amazonaws.com/RoslindaleText-Regular.otf");
+	weight: 400;
+}
+
+
+@font-face {
+	font-family: 'Roslindale Variable';
+	src: url("https://jesi-rgb-fonts.s3.eu-west-3.amazonaws.com/RoslindaleVariable-VF%5BDeck%5D.woff");
+	weight: 400;
+}
+
 @import 'tailwindcss';
 @plugin '@tailwindcss/typography';
 
@@ -84,7 +104,7 @@
 	--font-noto: 'Noto Sans', sans-serif;
 
 	--font-sans: 'AT Name Sans Variable', 'Noto Sans', sans-serif;
-	--font-serif: 'Roslindale Text', serif;
+	--font-serif: 'Roslindale Text Regular', serif;
 	--font-display: 'Roslindale Variable', sans-serif;
 
 	--color-subtle: color-mix(in oklch, var(--color-base-content), transparent 50%);
