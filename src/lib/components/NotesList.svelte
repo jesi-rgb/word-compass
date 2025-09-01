@@ -162,7 +162,7 @@
 					<ContextMenu.Trigger class="w-full">
 						<div
 							class="card w-full cursor-pointer border
-							border-subtle
+							border-muted
 							bg-base-100 transition-all hover:border-primary"
 							onclick={(e) => handleNoteClick(note.id, e)}
 							onkeydown={(e) => e.key === 'Enter' && goto(`/note/${note.id}`)}
