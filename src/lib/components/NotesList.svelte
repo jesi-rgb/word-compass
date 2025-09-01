@@ -109,7 +109,7 @@
 <div class="mx-auto max-w-6xl p-6">
 	<div class="mb-6 flex items-center justify-between">
 		<h1 class="text-3xl font-bold">Word Compass</h1>
-		<button class="btn btn-primary" onclick={createNewNote}>
+		<button class="btn btn-sm btn-primary" onclick={createNewNote}>
 			<svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
 			</svg>
