@@ -3,10 +3,11 @@ import { db } from '$lib/server/db/index.js';
 import { notes } from '$lib/server/db/schema.js';
 import type { CreateNoteRequest } from '$lib/types.js';
 import type { RequestHandler } from './$types.js';
+import { desc } from 'drizzle-orm';
 
 export const GET: RequestHandler = async () => {
 	try {
-		const allNotes = await db.select().from(notes).orderBy(notes.created_at);
+		const allNotes = await db.select().from(notes).orderBy(desc(notes.created_at));
 		return json(allNotes);
 	} catch (error) {
 		console.error('Error fetching notes:', error);
