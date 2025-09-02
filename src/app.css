@@ -1,32 +1,39 @@
-@import url("https://fonts.bunny.net/css?family=noto-sans:300,300i,400,400i");
+@import url('https://fonts.bunny.net/css?family=noto-sans:300,300i,400,400i');
 
 @font-face {
 	font-family: 'AT Name Sans Variable';
-	src: url("https://jesi-rgb-fonts.s3.eu-west-3.amazonaws.com/AT-NameSansVariable.ttf");
-	weight: 1 1000;
+	src: url('https://jesi-rgb-fonts.s3.eu-west-3.amazonaws.com/AT-NameSansVariable.ttf');
+	font-weight: 1 1000;
+	font-display: swap;
 }
 
 @font-face {
 	font-family: 'Roslindale Text Regular';
-	src: url("https://jesi-rgb-fonts.s3.eu-west-3.amazonaws.com/RoslindaleText-Regular.otf");
-	weight: 400;
+	src: url('https://jesi-rgb-fonts.s3.eu-west-3.amazonaws.com/RoslindaleText-Regular.otf');
+	font-weight: 400;
+	font-display: swap;
 }
-
 
 @font-face {
 	font-family: 'Roslindale Variable';
-	src: url("https://jesi-rgb-fonts.s3.eu-west-3.amazonaws.com/RoslindaleVariable-VF%5BDeck%5D.woff");
-	weight: 400;
+	src: url('https://jesi-rgb-fonts.s3.eu-west-3.amazonaws.com/RoslindaleVariable-VF%5BDeck%5D.woff');
+	font-weight: 400;
+	font-display: swap;
 }
 
 @import 'tailwindcss';
 @plugin '@tailwindcss/typography';
 
+* {
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	text-rendering: optimizeLegibility;
+}
 
 @plugin "daisyui/theme" {
-	name: "reallol";
+	name: 'reallol';
 	default: true;
-	color-scheme: "light";
+	color-scheme: 'light';
 	--color-base-100: oklch(98% 0.002 47.839);
 	--color-base-200: oklch(96% 0.006 47.839);
 	--color-base-300: oklch(92% 0.006 47.839);
@@ -58,14 +65,14 @@
 }
 
 @plugin "daisyui/theme" {
-	name: "barelycookie";
-	color-scheme: "dark";
+	name: 'barelycookie';
+	color-scheme: 'dark';
 	prefersdark: true;
 	--color-base-100: oklch(21% 0.006 56.043);
 	--color-base-200: oklch(26% 0.007 34.298);
 	--color-base-300: oklch(37% 0.01 67.558);
 	--color-base-content: oklch(92% 0.006 264.531);
-	--color-primary: oklch(93.00% 0.10 175.07);
+	--color-primary: oklch(93% 0.1 175.07);
 	--color-primary-content: oklch(39% 0.095 152.535);
 	--color-secondary: oklch(70% 0.183 293.541);
 	--color-secondary-content: oklch(28% 0.141 291.089);
@@ -93,8 +100,10 @@
 
 @plugin "daisyui" {
 	logs: true;
-	root: ":root";
-	themes: reallol --default, barelycookie --prefersdark;
+	root: ':root';
+	themes:
+		reallol --default,
+		barelycookie --prefersdark;
 }
 
 @theme {
@@ -103,9 +112,10 @@
 
 	--font-noto: 'Noto Sans', sans-serif;
 
-	--font-sans: 'AT Name Sans Variable', 'Noto Sans', sans-serif;
-	--font-serif: 'Roslindale Text Regular', serif;
-	--font-display: 'Roslindale Variable', sans-serif;
+	--font-sans:
+		'AT Name Sans Variable', 'Noto Sans', 'Segoe UI', system-ui, -apple-system, sans-serif;
+	--font-serif: 'Roslindale Text Regular', 'Georgia', 'Times New Roman', serif;
+	--font-display: 'Roslindale Variable', 'Segoe UI', system-ui, -apple-system, sans-serif;
 
 	--color-subtle: color-mix(in oklch, var(--color-base-content), transparent 50%);
 	--color-muted: color-mix(in oklch, var(--color-base-content), transparent 80%);
