@@ -26,7 +26,7 @@
 				</svg>
 				<span class="text-xs text-error">{error}</span>
 			</div>
-		{:else if definition}
+		{:else if definition?.ok}
 			<h4 class="mb-2 text-sm font-semibold text-primary uppercase">
 				{definition.data.word}
 			</h4>

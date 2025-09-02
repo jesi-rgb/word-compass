@@ -9,14 +9,26 @@
 	}
 
 	let { wordDefinition, wordError, isLoadingDefinition }: Props = $props();
+	let image = $state<string | null>(null);
+
+	async function getImageUrl(word: string) {
+		const data = await fetch(`/api/images/${encodeURIComponent(word)}`);
+		const imageJson = await data.json();
+		console.log(image);
+		image = imageJson.thumb;
+	}
 </script>
 
+{#if image}
+	<img src={image} alt="" />
+{/if}
+
 {#if wordDefinition || wordError || isLoadingDefinition}
-	<div class="mt-4 w-full bg-base-200 px-section py-5">
+	<div class="mt-4 w-full flex-1 bg-base-200 px-section py-5">
 		<div class="">
 			<div class="flex items-center justify-between gap-2">
 				<h4 class="mb-5 font-semibold text-primary uppercase">
-					{wordDefinition?.data.word}
+					{wordDefinition?.ok ? wordDefinition.data.word : ''}
 				</h4>
 				{#if isLoadingDefinition}
 					<div class="loading loading-bars"></div>
@@ -37,7 +49,7 @@
 						<span class="text-sm font-medium text-error">{wordError}</span>
 					</div>
 				</div>
-			{:else if wordDefinition?.data?.meanings}
+			{:else if wordDefinition?.ok && wordDefinition.data?.meanings}
 				<div class="space-y-2">
 					{#each wordDefinition.data.meanings as meaning, i}
 						<div class="mb-7 border-l-4 border-primary pl-3">

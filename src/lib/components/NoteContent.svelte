@@ -32,12 +32,10 @@
 			div!.removeEventListener('scroll', handleScroll);
 		};
 	});
-
-	$inspect(atTop, atBottom);
 </script>
 
-<div class="relative prose h-[50vh] max-w-none">
-	<div class="h-full overflow-scroll" bind:this={div}>
+<div class="relative prose max-w-none">
+	<div class="max-h-[50vh] overflow-auto" bind:this={div}>
 		<div class="font-serif text-base leading-relaxed">
 			{#each renderedWords as segment}
 				{#if segment.type === 'word'}

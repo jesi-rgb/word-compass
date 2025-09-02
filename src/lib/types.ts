@@ -61,10 +61,16 @@ export interface WordAnalysisResponse {
 		word: string;
 		meanings: WordMeaning[];
 	};
-	ok: boolean;
+	ok: true;
 }
 
-export type RaeApiResponse = WordAnalysisResponse;
+export interface RaeErrorResponse {
+	error: string;
+	ok: false;
+	suggestions?: string[];
+}
+
+export type RaeApiResponse = WordAnalysisResponse | RaeErrorResponse;
 
 export interface Note {
 	id: number;
