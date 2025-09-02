@@ -41,10 +41,6 @@ export const GET: RequestHandler = async ({ params, fetch }) => {
 		// Fetch from RAE API if not in cache
 		let response = await fetch(`${RAE_API_BASE_URL}/${encodeURIComponent(word)}`);
 
-		if (!response.ok) {
-			throw new Error(`RAE API responded with status: ${response.status}`);
-		}
-
 		let wordData: RaeApiResponse = await response.json();
 
 		// Check if the response indicates word not found (200 OK but ok: false)
